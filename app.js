@@ -7,7 +7,7 @@ const Review = require("./models/review.js")
 const methodOverride = require("method-override")
 const catchAsync = require("./utils/catchAsync.js")
 const ExpressError = require("./utils/ExpressError.js")
-const { campgroundSchema } = require("./schemas.js")
+const { campgroundSchema, reviewSchema } = require("./schemas.js")
 require("dotenv").config()
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -30,6 +30,17 @@ app.use(methodOverride("_method"))
 
 const validateCampground = (req, res, next) => {
     const { error } = campgroundSchema.validate(req.body)
+
+    if(error) {
+        const msg = error.details.map(el => el.message).join(",")
+        throw new ExpressError(msg, 400)
+    } else {
+        next()
+    }
+}
+
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body)
 
     if(error) {
         const msg = error.details.map(el => el.message).join(",")
@@ -84,7 +95,7 @@ app.delete("/campgrounds/:id", catchAsync(async (req, res) => {
     res.redirect("/campgrounds")
 }))
 
-app.post("/campgrounds/:id/reviews", catchAsync(async (req, res) => {
+app.post("/campgrounds/:id/reviews", validateReview, catchAsync(async (req, res) => {
     const { review: reviewData } = req.body
     const review = new Review(reviewData)
     const { id } = req.params
