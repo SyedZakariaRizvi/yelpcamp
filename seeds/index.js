@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const Campground = require("../models/campground.js")
 const cities = require("./cities.js")
 const { descriptors, places } = require("./seedHelpers.js")
-require("dotenv").config()
+require("dotenv").config({ path: '../.env' })
 
 console.log(process.env.MONGODB_URI)
 mongoose.connect(process.env.MONGODB_URI)
@@ -27,7 +27,8 @@ const seedDB = async () => {
             image: `https://picsum.photos/400?random=${Math.random()}`,
             price: randomPrice,
             description: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Cupiditate tempora praesentium asperiores odio earum eaque, et aliquam? Voluptatem itaque, laudantium quis vitae eius in assumenda deserunt ipsam animi illum non?",
-            location: `${cities[random1000].city}, ${cities[random1000].state}`
+            location: `${cities[random1000].city}, ${cities[random1000].state}`,
+            author: "66dca539e319cd9defaafbd7"
         })
         await camp.save()
     }
