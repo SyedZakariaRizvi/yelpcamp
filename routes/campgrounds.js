@@ -2,33 +2,10 @@ const express = require("express")
 const router = express.Router()
 
 const catchAsync = require("../utils/catchAsync.js")
-const ExpressError = require("../utils/ExpressError.js")
 
 const Campground = require("../models/campground.js")
-const { campgroundSchema } = require("../schemas.js")
 
-const { isLoggedIn } = require("../middleware.js")
-
-const validateCampground = (req, res, next) => {
-    const { error } = campgroundSchema.validate(req.body)
-
-    if(error) {
-        const msg = error.details.map(el => el.message).join(",")
-        throw new ExpressError(msg, 400)
-    } else {
-        next()
-    }
-}
-
-const isAuthor = async (req, res, next) => {
-    const { id } = req.params
-    const camp = await Campground.findById(id)
-    if(!camp.author.equals(req.user._id)) {
-        req.flash("error", "You do not have the permission to do that!")
-        return res.redirect(`/campgrounds/${id}`)
-    }
-    next()
-}
+const { isLoggedIn, isAuthor, validateCampground } = require("../middleware.js")
 
 router.get("/", catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({})
