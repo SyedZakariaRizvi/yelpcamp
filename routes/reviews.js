@@ -6,11 +6,12 @@ const Review = require("../models/review.js")
 
 const catchAsync = require("../utils/catchAsync.js")
 
-const { validateReview } = require("../middleware.js")
+const { validateReview, isLoggedIn } = require("../middleware.js")
 
-router.post("/", validateReview, catchAsync(async (req, res) => {
+router.post("/", isLoggedIn, validateReview, catchAsync(async (req, res) => {
     const { review: reviewData } = req.body
     const review = new Review(reviewData)
+    review.author = req.user._id
     const { id } = req.params
     const campground = await Campground.findById(id)
     campground.reviews.push(review)
