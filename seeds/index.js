@@ -2,9 +2,14 @@ const mongoose = require("mongoose")
 const Campground = require("../models/campground.js")
 const cities = require("./cities.js")
 const { descriptors, places } = require("./seedHelpers.js")
-require("dotenv").config({ path: '../.env' })
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 
-console.log(process.env.MONGODB_URI)
+if (!process.env.MONGODB_URI) {
+    console.error("MONGODB_URI is undefined. Check your .env file and dotenv configuration.");
+} else {
+    console.log("MONGODB_URI:", process.env.MONGODB_URI);
+}
+
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
         console.log("Database Connected")
@@ -28,7 +33,7 @@ const seedDB = async () => {
             price: randomPrice,
             description: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Cupiditate tempora praesentium asperiores odio earum eaque, et aliquam? Voluptatem itaque, laudantium quis vitae eius in assumenda deserunt ipsam animi illum non?",
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
-            author: "66dca539e319cd9defaafbd7"
+            author: "66ee1b32c37ffffd96698d75"
         })
         await camp.save()
     }
